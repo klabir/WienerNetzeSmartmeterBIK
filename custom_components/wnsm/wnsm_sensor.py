@@ -91,6 +91,8 @@ class WNSMSensor(SensorEntity):
             await async_smartmeter.login()
             zaehlpunkt_response = await async_smartmeter.get_zaehlpunkt(self.zaehlpunkt)
             self._attr_extra_state_attributes = zaehlpunkt_response
+            base_information = await async_smartmeter.get_base_information()
+            self._attr_extra_state_attributes.update(base_information)
 
             if async_smartmeter.is_active(zaehlpunkt_response):
                 # Since the update is not exactly at midnight, both yesterday and the day before are tried to make sure a meter reading is returned
@@ -142,6 +144,8 @@ class WNSMSensorWithApiDate(WNSMSensor):
             await async_smartmeter.login()
             zaehlpunkt_response = await async_smartmeter.get_zaehlpunkt(self.zaehlpunkt)
             self._attr_extra_state_attributes = zaehlpunkt_response
+            base_information = await async_smartmeter.get_base_information()
+            self._attr_extra_state_attributes.update(base_information)
 
             if async_smartmeter.is_active(zaehlpunkt_response):
                 start_date = before(today(), 2)
