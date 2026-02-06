@@ -7,11 +7,14 @@ from typing import Any, Optional
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 
 from .api import Smartmeter
-from .const import ATTRS_ZAEHLPUNKTE_CALL, DOMAIN, CONF_ZAEHLPUNKTE
 from .utils import translate_dict
+from .const import ATTRS_ZAEHLPUNKTE_CALL, DOMAIN, CONF_ZAEHLPUNKTE, CONF_SCAN_INTERVAL
+
+DEFAULT_SCAN_INTERVAL_MINUTES = 60 * 6
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,3 +72,37 @@ class WienerNetzeSmartMeterCustomConfigFlow(config_entries.ConfigFlow, domain=DO
         return self.async_show_form(
             step_id="user", data_schema=AUTH_SCHEMA, errors=errors
         )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> "WienerNetzeSmartMeterOptionsFlow":
+        return WienerNetzeSmartMeterOptionsFlow(config_entry)
+
+
+class WienerNetzeSmartMeterOptionsFlow(config_entries.OptionsFlow):
+    """Handle options flow for Wiener Netze Smartmeter."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: Optional[dict[str, Any]] = None):
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        options_schema = vol.Schema(
+            {
+                vol.Optional(
+                    CONF_SCAN_INTERVAL,
+                    default=self.config_entry.options.get(
+                        CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
+                    ),
+                ): cv.positive_int
+            }
+        )
+        return self.async_show_form(
+            step_id="init",
+            data_schema=options_schema,
+        )
+
