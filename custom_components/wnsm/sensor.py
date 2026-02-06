@@ -22,7 +22,7 @@ from homeassistant.helpers.typing import (
     DiscoveryInfoType,
 )
 from .const import CONF_ZAEHLPUNKTE
-from .wnsm_sensor import WNSMSensor
+from .wnsm_sensor import WNSMSensor, WNSMSensorWithApiDate
 # Time between updating data from Wiener Netze
 SCAN_INTERVAL = timedelta(minutes=60 * 6)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -41,10 +41,14 @@ async def async_setup_entry(
 ):
     """Setup sensors from a config entry created in the integrations UI."""
     config = hass.data[DOMAIN][config_entry.entry_id]
-    wnsm_sensors = [
-        WNSMSensor(config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"])
-        for zp in config[CONF_ZAEHLPUNKTE]
-    ]
+    wnsm_sensors = []
+    for zp in config[CONF_ZAEHLPUNKTE]:
+        wnsm_sensors.append(
+            WNSMSensor(config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"])
+        )
+        wnsm_sensors.append(
+            WNSMSensorWithApiDate(config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"])
+        )
     async_add_entities(wnsm_sensors, update_before_add=True)
 
 
@@ -58,4 +62,7 @@ async def async_setup_platform(
 ) -> None:
     """Set up the sensor platform by adding it into configuration.yaml"""
     wnsm_sensor = WNSMSensor(config[CONF_USERNAME], config[CONF_PASSWORD], config[CONF_DEVICE_ID])
-    async_add_entities([wnsm_sensor], update_before_add=True)
+    wnsm_sensor_with_api_date = WNSMSensorWithApiDate(
+        config[CONF_USERNAME], config[CONF_PASSWORD], config[CONF_DEVICE_ID]
+    )
+    async_add_entities([wnsm_sensor, wnsm_sensor_with_api_date], update_before_add=True)
