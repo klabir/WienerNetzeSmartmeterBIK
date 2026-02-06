@@ -43,11 +43,14 @@ async def async_setup_entry(
     config = hass.data[DOMAIN][config_entry.entry_id]
     wnsm_sensors = []
     for zp in config[CONF_ZAEHLPUNKTE]:
+        display_name = zp.get("label") or zp.get("zaehlpunktnummer")
         wnsm_sensors.append(
-            WNSMSensor(config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"])
+            WNSMSensor(config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"], display_name)
         )
         wnsm_sensors.append(
-            WNSMSensorWithApiDate(config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"])
+            WNSMSensorWithApiDate(
+                config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"], display_name
+            )
         )
     async_add_entities(wnsm_sensors, update_before_add=True)
 
