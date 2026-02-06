@@ -7,6 +7,7 @@ from typing import Any, Optional
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 
 from .api import Smartmeter
@@ -72,6 +73,13 @@ class WienerNetzeSmartMeterCustomConfigFlow(config_entries.ConfigFlow, domain=DO
             step_id="user", data_schema=AUTH_SCHEMA, errors=errors
         )
 
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> "WienerNetzeSmartMeterOptionsFlow":
+        return WienerNetzeSmartMeterOptionsFlow(config_entry)
+
 
 class WienerNetzeSmartMeterOptionsFlow(config_entries.OptionsFlow):
     """Handle options flow for Wiener Netze Smartmeter."""
@@ -98,8 +106,3 @@ class WienerNetzeSmartMeterOptionsFlow(config_entries.OptionsFlow):
             data_schema=options_schema,
         )
 
-
-async def async_get_options_flow(
-    config_entry: config_entries.ConfigEntry,
-) -> WienerNetzeSmartMeterOptionsFlow:
-    return WienerNetzeSmartMeterOptionsFlow(config_entry)
