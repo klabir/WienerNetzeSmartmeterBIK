@@ -106,3 +106,8 @@ class WienerNetzeSmartMeterOptionsFlow(config_entries.OptionsFlow):
             data_schema=options_schema,
         )
 
+
+async def async_get_options_flow(
+    config_entry: config_entries.ConfigEntry,
+) -> WienerNetzeSmartMeterOptionsFlow:
+    return WienerNetzeSmartMeterOptionsFlow(config_entry)
