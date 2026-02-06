@@ -4,6 +4,7 @@ from asyncio import Future
 from datetime import datetime
 
 from homeassistant.core import HomeAssistant
+from homeassistant.util import dt as dt_util
 
 from .api import Smartmeter
 from .api.constants import ValueType
@@ -125,6 +126,37 @@ class AsyncSmartmeter:
         meter_readings = translate_dict(response, ATTRS_HISTORIC_DATA)
         if "values" in meter_readings and all("messwert" in messwert for messwert in meter_readings['values']) and len(meter_readings['values']) > 0:
             return meter_readings['values'][0]['messwert'] / 1000
+
+    async def get_meter_reading_with_date_from_historic_data(
+        self, zaehlpunkt: str, start_date: datetime, end_date: datetime
+    ) -> tuple[float | None, datetime | None]:
+        """Return latest daily meter reading and its timestamp from the given start date until today."""
+        response = await self.hass.async_add_executor_job(
+            self.smartmeter.historical_data,
+            zaehlpunkt,
+            start_date,
+            end_date,
+            ValueType.METER_READ,
+        )
+        if "Exception" in response:
+            raise RuntimeError(f"Cannot access historic data: {response}")
+        _LOGGER.debug(f"Raw historical data: {response}")
+        meter_readings = translate_dict(response, ATTRS_HISTORIC_DATA)
+        values = meter_readings.get("values", [])
+        candidates: list[tuple[datetime, float]] = []
+        for value in values:
+            messwert = value.get("messwert")
+            if messwert is None:
+                continue
+            timestamp = value.get("zeitBis") or value.get("zeitVon")
+            parsed = dt_util.parse_datetime(timestamp) if timestamp else None
+            if parsed is None:
+                continue
+            candidates.append((parsed, messwert))
+        if not candidates:
+            return None, None
+        latest_ts, latest_value = max(candidates, key=lambda item: item[0])
+        return latest_value / 1000, latest_ts
 
     @staticmethod
     def is_active(zaehlpunkt_response: dict) -> bool:
