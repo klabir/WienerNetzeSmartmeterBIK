@@ -13,6 +13,44 @@ This folder contains a Postman collection and a sample environment that mirror t
 3. Run the requests in the **Auth** folder to obtain an access token and API keys.
 4. Call the B2C/B2B/ALT endpoints using the same environment.
 
+## Step-by-step auth + consumption flow (with outputs)
+Use this order to obtain a bearer token and then fetch daily consumption. Each step lists the
+variables you must provide and the values you should extract for the next step.
+
+1. **Auth Login Page** (GET `{{auth_url}}/auth?...`)
+   - Provide: `client_id`, `redirect_uri`, `response_type`, `response_mode`, `scope`,
+     `code_challenge`, `code_challenge_method`.
+   - Result: HTML login page with a form action URL.
+   - Extract: set `auth_action_url` (the `<form action="...">` value).
+2. **Auth Login Action** (POST `{{auth_action_url}}`)
+   - Provide: `username`, `login`.
+   - Result: advances to the password step (typically another login form response).
+3. **Auth Login Submit** (POST `{{auth_action_url}}`)
+   - Provide: `username`, `password`.
+   - Result: redirect response containing an authorization `code` in the URL fragment.
+   - Extract: set `auth_code` (the `code` value from the redirect).
+4. **Auth Token** (POST `{{auth_url}}/token`)
+   - Provide: `grant_type`, `client_id`, `redirect_uri`, `code` (`auth_code`), `code_verifier`.
+   - Result: JSON with `access_token` and `refresh_token`.
+   - Extract: set `access_token`.
+5. **App Config** (GET `https://smartmeter-web.wienernetze.at/assets/app-config.json`)
+   - Provide: `Authorization: Bearer {{access_token}}`.
+   - Result: JSON with `b2cApiKey` and `b2bApiKey`.
+   - Extract: set `b2c_api_key`, `b2b_api_key`.
+6. **Zaehlpunkte** (GET `{{b2c_api_url}}/zaehlpunkte`)
+   - Provide: `Authorization: Bearer {{access_token}}`,
+     `X-Gateway-APIKey: {{b2c_api_key}}`.
+   - Result: list of meters (zaehlpunkte) and customer IDs.
+   - Extract: set `customer_id`, `zaehlpunktnummer`.
+7. **Daily consumption** (choose one)
+   - **B2C verbrauchRaw**: GET
+     `{{b2c_api_url}}/messdaten/{{customer_id}}/{{zaehlpunktnummer}}/verbrauchRaw`
+     with `dateFrom`, `dateTo`, `granularity=DAY`.
+   - **B2B messwerte**: GET
+     `{{b2b_api_url}}/zaehlpunkte/{{customer_id}}/{{zaehlpunktnummer}}/messwerte`
+     with `datumVon`, `datumBis`, `wertetyp=DAY`.
+   - Both use `Authorization: Bearer {{access_token}}` and the matching `X-Gateway-APIKey`.
+
 ## Bruno conversions
 If you convert this collection to Bruno, import `bruno.env.sample.json` as a Bruno environment.
 Bruno expects a `variables` array (not Postman’s `values` array), so the Postman `env.sample.json`
