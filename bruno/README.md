@@ -2,8 +2,17 @@
 
 Import the `bruno/` folder into Bruno. The requests use variables you can define in a Bruno environment:
 
-## Required variables
+## Required variables (auth + API)
 
+- `auth_url` (e.g. `https://log.wien/auth/realms/logwien/protocol/openid-connect`)
+- `client_id` (e.g. `wn-smartmeter`)
+- `redirect_uri` (e.g. `https://smartmeter-web.wienernetze.at/`)
+- `code_verifier`
+- `code_challenge`
+- `auth_action_url` (from the login page HTML form action)
+- `auth_code` (from the redirect fragment after login)
+- `username`
+- `password`
 - `access_token`
 - `b2c_api_url`
 - `b2b_api_url`
