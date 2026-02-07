@@ -22,6 +22,7 @@ from homeassistant.helpers.typing import (
     DiscoveryInfoType,
 )
 from .const import CONF_ZAEHLPUNKTE, CONF_SCAN_INTERVAL
+from .api.constants import ValueType
 from .wnsm_sensor import WNSMSensor, WNSMSensorWithApiDate
 # Time between updating data from Wiener Netze
 SCAN_INTERVAL = timedelta(minutes=60 * 6)
@@ -57,8 +58,23 @@ async def async_setup_entry(
         api_sensor = WNSMSensorWithApiDate(
             config[CONF_USERNAME], config[CONF_PASSWORD], zp["zaehlpunktnummer"], display_name
         )
-        api_sensor._attr_scan_interval = scan_interval
-        wnsm_sensors.extend([base_sensor, api_sensor])
+        api_sensor_day = WNSMSensorWithApiDate(
+            config[CONF_USERNAME],
+            config[CONF_PASSWORD],
+            zp["zaehlpunktnummer"],
+            display_name,
+            ValueType.DAY,
+        )
+        api_sensor_quarter = WNSMSensorWithApiDate(
+            config[CONF_USERNAME],
+            config[CONF_PASSWORD],
+            zp["zaehlpunktnummer"],
+            display_name,
+            ValueType.QUARTER_HOUR,
+        )
+        for sensor in (base_sensor, api_sensor, api_sensor_day, api_sensor_quarter):
+            sensor._attr_scan_interval = scan_interval
+        wnsm_sensors.extend([base_sensor, api_sensor, api_sensor_day, api_sensor_quarter])
     async_add_entities(wnsm_sensors, update_before_add=True)
 
 
@@ -74,9 +90,28 @@ async def async_setup_platform(
     scan_interval_minutes = config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES)
     scan_interval = timedelta(minutes=scan_interval_minutes)
     wnsm_sensor = WNSMSensor(config[CONF_USERNAME], config[CONF_PASSWORD], config[CONF_DEVICE_ID])
-    wnsm_sensor._attr_scan_interval = scan_interval
     wnsm_sensor_with_api_date = WNSMSensorWithApiDate(
         config[CONF_USERNAME], config[CONF_PASSWORD], config[CONF_DEVICE_ID]
     )
-    wnsm_sensor_with_api_date._attr_scan_interval = scan_interval
-    async_add_entities([wnsm_sensor, wnsm_sensor_with_api_date], update_before_add=True)
+    wnsm_sensor_with_api_date_day = WNSMSensorWithApiDate(
+        config[CONF_USERNAME], config[CONF_PASSWORD], config[CONF_DEVICE_ID], None, ValueType.DAY
+    )
+    wnsm_sensor_with_api_date_quarter = WNSMSensorWithApiDate(
+        config[CONF_USERNAME], config[CONF_PASSWORD], config[CONF_DEVICE_ID], None, ValueType.QUARTER_HOUR
+    )
+    for sensor in (
+        wnsm_sensor,
+        wnsm_sensor_with_api_date,
+        wnsm_sensor_with_api_date_day,
+        wnsm_sensor_with_api_date_quarter,
+    ):
+        sensor._attr_scan_interval = scan_interval
+    async_add_entities(
+        [
+            wnsm_sensor,
+            wnsm_sensor_with_api_date,
+            wnsm_sensor_with_api_date_day,
+            wnsm_sensor_with_api_date_quarter,
+        ],
+        update_before_add=True,
+    )

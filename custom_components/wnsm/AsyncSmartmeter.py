@@ -128,15 +128,19 @@ class AsyncSmartmeter:
             return meter_readings['values'][0]['messwert'] / 1000
 
     async def get_meter_reading_with_date_from_historic_data(
-        self, zaehlpunkt: str, start_date: datetime, end_date: datetime
+        self,
+        zaehlpunkt: str,
+        start_date: datetime,
+        end_date: datetime,
+        valuetype: ValueType = ValueType.METER_READ,
     ) -> tuple[float | None, datetime | None]:
-        """Return latest daily meter reading and its timestamp from the given start date until today."""
+        """Return latest meter reading and its timestamp from the given start date until today."""
         response = await self.hass.async_add_executor_job(
             self.smartmeter.historical_data,
             zaehlpunkt,
             start_date,
             end_date,
-            ValueType.METER_READ,
+            valuetype,
         )
         if "Exception" in response:
             raise RuntimeError(f"Cannot access historic data: {response}")
@@ -153,9 +157,8 @@ class AsyncSmartmeter:
             parsed = start_ts or end_ts
             if parsed is None:
                 continue
-            if parsed.minute == 0 and parsed.second == 0:
-                if parsed.hour in (0, 23):
-                    parsed = parsed - timedelta(days=1)
+            if end_ts is not None and valuetype in (ValueType.METER_READ, ValueType.DAY):
+                parsed = end_ts - timedelta(days=1)
             candidates.append((parsed, messwert))
         if not candidates:
             return None, None

@@ -123,16 +123,28 @@ class WNSMSensorWithApiDate(WNSMSensor):
     Duplicate sensor that uses API-provided timestamps for the latest meter reading.
     """
 
-    def __init__(self, username: str, password: str, zaehlpunkt: str, name: str | None = None) -> None:
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        zaehlpunkt: str,
+        name: str | None = None,
+        valuetype: ValueType = ValueType.METER_READ,
+    ) -> None:
         base_name = name or zaehlpunkt
         super().__init__(username, password, zaehlpunkt, base_name)
-        self._name = f"{base_name} (API Date)"
+        self._valuetype = valuetype
+        if valuetype == ValueType.METER_READ:
+            suffix = "API Date"
+        else:
+            suffix = f"API Date {valuetype.value}"
+        self._name = f"{base_name} ({suffix})"
         self._attr_name = self._name
 
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return f"{self.zaehlpunkt}_api_date"
+        return f"{self.zaehlpunkt}_api_date_{self._valuetype.value.lower()}"
 
     async def async_update(self):
         """
@@ -150,7 +162,7 @@ class WNSMSensorWithApiDate(WNSMSensor):
             if async_smartmeter.is_active(zaehlpunkt_response):
                 start_date = before(today(), 2)
                 meter_reading, reading_ts = await async_smartmeter.get_meter_reading_with_date_from_historic_data(
-                    self.zaehlpunkt, start_date, datetime.now()
+                    self.zaehlpunkt, start_date, datetime.now(), self._valuetype
                 )
                 if meter_reading is not None:
                     self._attr_native_value = meter_reading
