@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Optional
 
 from homeassistant.components.sensor import (
@@ -170,7 +170,9 @@ class WNSMSensorWithApiDate(WNSMSensor):
                     self._attr_native_value = meter_reading
                 if reading_ts is not None:
                     local_ts = dt_util.as_local(reading_ts) if reading_ts.tzinfo else reading_ts
-                    self._attr_extra_state_attributes["readingDate"] = local_ts.date().isoformat()
+                    self._attr_extra_state_attributes["readingDate"] = (
+                        local_ts - timedelta(days=1)
+                    ).date().isoformat()
                     self._attr_extra_state_attributes["readingTimestamp"] = local_ts.isoformat()
             self._available = True
             self._updatets = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
