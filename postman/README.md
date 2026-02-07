@@ -24,6 +24,8 @@ If you want Bruno to auto-generate `code_verifier` and `code_challenge`:
 2. Go to **Scripts → Pre Request**.
 3. Paste the script below and run the request once to populate the environment.
    (This uses the Web Crypto API available in Bruno scripting.)
+4. The values are written into the active environment as `code_verifier` and `code_challenge`.
+   You can view them in the environment editor and the script logs them in the console.
 
 ```javascript
 const base64UrlEncode = (bytes) => {
