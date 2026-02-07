@@ -1,0 +1,13 @@
+meta {
+  name: profile
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{alt_api_url}}/user/profile
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}

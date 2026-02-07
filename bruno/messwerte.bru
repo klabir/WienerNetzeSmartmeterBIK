@@ -1,0 +1,16 @@
+meta {
+  name: messwerte
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{b2b_api_url}}/zaehlpunkte/{{customer_id}}/{{zaehlpunktnummer}}/messwerte
+  query: datumVon={{date_from_day}}&datumBis={{date_to_day}}&wertetyp={{wertetyp}}
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2b_api_key}}
+  Accept: application/json
+}

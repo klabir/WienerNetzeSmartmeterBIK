@@ -1,0 +1,13 @@
+meta {
+  name: delete_ereignis
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{alt_api_url}}/user/ereignis/{{ereignis_id}}
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
