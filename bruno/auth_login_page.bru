@@ -1,0 +1,19 @@
+meta {
+  name: auth_login_page
+  type: http
+  seq: 0
+}
+
+get {
+  url: {{auth_url}}/auth
+  query: client_id={{client_id}}&redirect_uri={{redirect_uri}}&response_mode=fragment&response_type=code&scope=openid&nonce=&code_challenge={{code_challenge}}&code_challenge_method=S256
+}
+
+headers {
+  Accept: text/html
+  User-Agent: {{user_agent}}
+}
+
+auth {
+  type: none
+}
