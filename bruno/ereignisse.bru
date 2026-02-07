@@ -1,0 +1,14 @@
+meta {
+  name: ereignisse
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{alt_api_url}}/user/ereignisse
+  query: zaehlpunkt={{zaehlpunktnummer}}&dateFrom={{date_from}}&dateUntil={{date_until}}
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}

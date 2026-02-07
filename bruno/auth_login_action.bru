@@ -1,0 +1,19 @@
+meta {
+  name: auth_login_action
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{auth_action_url}}
+  body: form
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+}
+
+body:form {
+  username: {{username}}
+  login: " "
+}

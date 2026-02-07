@@ -1,0 +1,14 @@
+meta {
+  name: meterReadings
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{b2c_api_url}}/zaehlpunkt/meterReadings
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2c_api_key}}
+}
