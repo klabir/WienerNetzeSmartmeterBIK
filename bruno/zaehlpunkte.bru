@@ -1,0 +1,14 @@
+meta {
+  name: zaehlpunkte
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{b2c_api_url}}/zaehlpunkte
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2c_api_key}}
+}
