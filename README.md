@@ -21,6 +21,10 @@ display issues seen with the original date heuristic. The original sensors remai
 add `readingDate` and `readingTimestamp` attributes derived from the API data. This keeps existing dashboards
 stable while offering corrected date handling on the new entities.
 
+## Postman collection
+
+Sample Postman requests for all API calls (including auth flow) live in `postman/`.
+
 ## FAQs
 [FAQs](https://github.com/DarwinsBuddy/WienerNetzeSmartmeter/discussions/19)
 
