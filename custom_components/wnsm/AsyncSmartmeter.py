@@ -153,9 +153,9 @@ class AsyncSmartmeter:
             parsed = start_ts or end_ts
             if parsed is None:
                 continue
-            if start_ts is None and end_ts is not None and end_ts.minute == 0 and end_ts.second == 0:
-                if end_ts.hour in (0, 23):
-                    parsed = end_ts - timedelta(days=1)
+            if parsed.minute == 0 and parsed.second == 0:
+                if parsed.hour in (0, 23):
+                    parsed = parsed - timedelta(days=1)
             candidates.append((parsed, messwert))
         if not candidates:
             return None, None
