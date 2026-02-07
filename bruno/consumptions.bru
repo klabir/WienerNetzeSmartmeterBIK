@@ -1,0 +1,14 @@
+meta {
+  name: consumptions
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{b2c_api_url}}/zaehlpunkt/consumptions
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2c_api_key}}
+}
