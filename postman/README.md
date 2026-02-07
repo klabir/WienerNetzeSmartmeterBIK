@@ -18,6 +18,32 @@ If you convert this collection to Bruno, import `bruno.env.sample.json` as a Bru
 Bruno expects a `variables` array (not Postman’s `values` array), so the Postman `env.sample.json`
 won’t load directly.
 
+### Bruno pre-request script (PKCE)
+If you want Bruno to auto-generate `code_verifier` and `code_challenge`:
+1. Open any request in Bruno (or the collection).
+2. Go to **Scripts → Pre Request**.
+3. Paste the script below and run the request once to populate the environment.
+
+```javascript
+const crypto = require('crypto');
+
+const base64UrlEncode = (buffer) => (
+  buffer.toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '')
+);
+
+const codeVerifier = base64UrlEncode(crypto.randomBytes(32));
+const codeChallenge = base64UrlEncode(
+  crypto.createHash('sha256').update(codeVerifier).digest()
+);
+
+bru.setEnvVar('code_verifier', codeVerifier);
+bru.setEnvVar('code_challenge', codeChallenge);
+console.log('PKCE generated', { codeVerifier, codeChallenge });
+```
+
 ## Auth notes
 - **Auth login page** and **token exchange** use **no auth** (form-encoded body only).
 - All API calls use **Bearer** authentication with `{{access_token}}`.
