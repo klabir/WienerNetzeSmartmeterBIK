@@ -1,0 +1,14 @@
+meta {
+  name: baseInformation
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{b2c_api_url}}/zaehlpunkt/baseInformation
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2c_api_key}}
+}
