@@ -1,0 +1,272 @@
+{
+  "info": {
+    "name": "Wiener Netze Smartmeter API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Auth Login Page",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "text/html"},
+              {"key": "User-Agent", "value": "{{user_agent}}"}
+            ],
+            "url": {
+              "raw": "{{auth_url}}/auth?client_id={{client_id}}&redirect_uri={{redirect_uri}}&response_mode=fragment&response_type=code&scope=openid&nonce=&code_challenge={{code_challenge}}&code_challenge_method=S256"
+            },
+            "auth": {"type": "noauth"}
+          }
+        },
+        {
+          "name": "Auth Login Action",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/x-www-form-urlencoded"}
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key": "username", "value": "{{username}}", "type": "text"},
+                {"key": "login", "value": " ", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{auth_action_url}}"
+            },
+            "auth": {"type": "noauth"}
+          }
+        },
+        {
+          "name": "Auth Login Submit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/x-www-form-urlencoded"}
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key": "username", "value": "{{username}}", "type": "text"},
+                {"key": "password", "value": "{{password}}", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{auth_action_url}}"
+            },
+            "auth": {"type": "noauth"}
+          }
+        },
+        {
+          "name": "Auth Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/x-www-form-urlencoded"}
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key": "grant_type", "value": "authorization_code", "type": "text"},
+                {"key": "client_id", "value": "{{client_id}}", "type": "text"},
+                {"key": "redirect_uri", "value": "{{redirect_uri}}", "type": "text"},
+                {"key": "code", "value": "{{auth_code}}", "type": "text"},
+                {"key": "code_verifier", "value": "{{code_verifier}}", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{auth_url}}/token"
+            },
+            "auth": {"type": "noauth"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Config",
+      "item": [
+        {
+          "name": "App Config (API keys)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{api_config_url}}"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {"key": "token", "value": "{{access_token}}", "type": "string"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "B2C",
+      "item": [
+        {
+          "name": "Zaehlpunkte",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2c_api_key}}"}
+            ],
+            "url": {"raw": "{{b2c_api_url}}/zaehlpunkte"}
+          }
+        },
+        {
+          "name": "Base Information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2c_api_key}}"}
+            ],
+            "url": {"raw": "{{b2c_api_url}}/zaehlpunkt/baseInformation"}
+          }
+        },
+        {
+          "name": "Consumptions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2c_api_key}}"}
+            ],
+            "url": {"raw": "{{b2c_api_url}}/zaehlpunkt/consumptions"}
+          }
+        },
+        {
+          "name": "Meter Readings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2c_api_key}}"}
+            ],
+            "url": {"raw": "{{b2c_api_url}}/zaehlpunkt/meterReadings"}
+          }
+        },
+        {
+          "name": "Verbrauch",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2c_api_key}}"}
+            ],
+            "url": {
+              "raw": "{{b2c_api_url}}/messdaten/{{customer_id}}/{{zaehlpunktnummer}}/verbrauch?dateFrom={{date_from}}&dayViewResolution={{day_view_resolution}}"
+            }
+          }
+        },
+        {
+          "name": "Verbrauch Raw",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2c_api_key}}"}
+            ],
+            "url": {
+              "raw": "{{b2c_api_url}}/messdaten/{{customer_id}}/{{zaehlpunktnummer}}/verbrauchRaw?dateFrom={{date_from}}&dateTo={{date_to}}&granularity=DAY"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "B2B",
+      "item": [
+        {
+          "name": "Messwerte",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "X-Gateway-APIKey", "value": "{{b2b_api_key}}"},
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{b2b_api_url}}/zaehlpunkte/{{customer_id}}/{{zaehlpunktnummer}}/messwerte?datumVon={{date_from_day}}&datumBis={{date_to_day}}&wertetyp={{wertetyp}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ALT",
+      "item": [
+        {
+          "name": "Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {"raw": "{{alt_api_url}}/user/profile"}
+          }
+        },
+        {
+          "name": "Ereignisse",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {
+              "raw": "{{alt_api_url}}/user/ereignisse?zaehlpunkt={{zaehlpunktnummer}}&dateFrom={{date_from}}&dateUntil={{date_until}}"
+            }
+          }
+        },
+        {
+          "name": "Create Ereignis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"endAt\": \"{{end_at}}\",\n  \"name\": \"{{event_name}}\",\n  \"startAt\": \"{{start_at}}\",\n  \"typ\": \"{{event_type}}\",\n  \"zaehlpunkt\": \"{{zaehlpunktnummer}}\"\n}"
+            },
+            "url": {"raw": "{{alt_api_url}}/user/ereignis"}
+          }
+        },
+        {
+          "name": "Delete Ereignis",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"}
+            ],
+            "url": {"raw": "{{alt_api_url}}/user/ereignis/{{ereignis_id}}"}
+          }
+        },
+        {
+          "name": "Bewegungsdaten",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{access_token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ],
+            "url": {
+              "raw": "{{alt_api_url}}/user/messwerte/bewegungsdaten?geschaeftspartner={{customer_id}}&zaehlpunktnummer={{zaehlpunktnummer}}&rolle={{rolle}}&zeitpunktVon={{zeitpunkt_von}}&zeitpunktBis={{zeitpunkt_bis}}&aggregat=NONE"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
