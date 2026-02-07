@@ -1,0 +1,23 @@
+meta {
+  name: create_ereignis
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{alt_api_url}}/user/ereignis
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  Content-Type: application/json
+}
+
+body:json {
+  "endAt": "{{end_at}}",
+  "name": "{{event_name}}",
+  "startAt": "{{start_at}}",
+  "typ": "{{event_type}}",
+  "zaehlpunkt": "{{zaehlpunktnummer}}"
+}
