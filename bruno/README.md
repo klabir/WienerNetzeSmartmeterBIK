@@ -1,6 +1,7 @@
 # Bruno collection for Wiener Netze Smartmeter API
 
-Import the `bruno/` folder into Bruno. A sample environment file is available at `bruno/env.sample.json`.
+Import the `bruno/` folder into Bruno (use “Open Collection” and select the `bruno/` directory).
+A sample environment file is available at `bruno/env.sample.json`.
 The requests use variables you can define in a Bruno environment:
 
 ## Required variables (auth + API)

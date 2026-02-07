@@ -14,6 +14,8 @@ providing information about a registered [WienerNetze Smartmeter](https://www.wi
 
 ## Fork notes
 
+Last updated: 2026-02-06
+
 This fork adds duplicate sensors that use the API-provided meter-reading timestamps to avoid the off-by-one-day
 display issues seen with the original date heuristic. The original sensors remain unchanged, while the duplicates
 add `readingDate` and `readingTimestamp` attributes derived from the API data. This keeps existing dashboards
