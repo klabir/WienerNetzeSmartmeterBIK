@@ -1,0 +1,15 @@
+meta {
+  name: verbrauchRaw
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{b2c_api_url}}/messdaten/{{customer_id}}/{{zaehlpunktnummer}}/verbrauchRaw
+  query: dateFrom={{date_from}}&dateTo={{date_to}}&granularity=DAY
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2c_api_key}}
+}
