@@ -1,0 +1,15 @@
+meta {
+  name: verbrauch
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{b2c_api_url}}/messdaten/{{customer_id}}/{{zaehlpunktnummer}}/verbrauch
+  query: dateFrom={{date_from}}&dayViewResolution={{day_view_resolution}}
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+  X-Gateway-APIKey: {{b2c_api_key}}
+}
