@@ -12,6 +12,13 @@
 This repo contains a custom component for [Home Assistant](https://www.home-assistant.io) for exposing a sensor
 providing information about a registered [WienerNetze Smartmeter](https://www.wienernetze.at/smartmeter).
 
+## Fork notes
+
+This fork adds duplicate sensors that use the API-provided meter-reading timestamps to avoid the off-by-one-day
+display issues seen with the original date heuristic. The original sensors remain unchanged, while the duplicates
+add `readingDate` and `readingTimestamp` attributes derived from the API data. This keeps existing dashboards
+stable while offering corrected date handling on the new entities.
+
 ## FAQs
 [FAQs](https://github.com/DarwinsBuddy/WienerNetzeSmartmeter/discussions/19)
 
@@ -51,4 +58,3 @@ Special thanks to [platrysma](https://github.com/platysma)
 for providing me a starting point [vienna-smartmeter](https://github.com/platysma/vienna-smartmeter)
 and especially [florianL21](https://github.com/florianL21/)
 for his [fork](https://github.com/florianL21/vienna-smartmeter/network)
-
