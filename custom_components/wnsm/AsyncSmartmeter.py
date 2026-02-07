@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from asyncio import Future
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
@@ -148,10 +148,14 @@ class AsyncSmartmeter:
             messwert = value.get("messwert")
             if messwert is None:
                 continue
-            timestamp = value.get("zeitBis") or value.get("zeitVon")
-            parsed = dt_util.parse_datetime(timestamp) if timestamp else None
+            start_ts = dt_util.parse_datetime(value.get("zeitVon")) if value.get("zeitVon") else None
+            end_ts = dt_util.parse_datetime(value.get("zeitBis")) if value.get("zeitBis") else None
+            parsed = start_ts or end_ts
             if parsed is None:
                 continue
+            if start_ts is None and end_ts is not None and end_ts.minute == 0 and end_ts.second == 0:
+                if end_ts.hour in (0, 23):
+                    parsed = end_ts - timedelta(days=1)
             candidates.append((parsed, messwert))
         if not candidates:
             return None, None
