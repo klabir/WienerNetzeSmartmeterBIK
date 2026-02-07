@@ -23,25 +23,43 @@ If you want Bruno to auto-generate `code_verifier` and `code_challenge`:
 1. Open any request in Bruno (or the collection).
 2. Go to **Scripts → Pre Request**.
 3. Paste the script below and run the request once to populate the environment.
+   (This uses the Web Crypto API available in Bruno scripting.)
 
 ```javascript
-const crypto = require('crypto');
-
-const base64UrlEncode = (buffer) => (
-  buffer.toString('base64')
+const base64UrlEncode = (bytes) => {
+  let binary = '';
+  bytes.forEach((b) => {
+    binary += String.fromCharCode(b);
+  });
+  return btoa(binary)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
-    .replace(/=+$/g, '')
-);
+    .replace(/=+$/g, '');
+};
 
-const codeVerifier = base64UrlEncode(crypto.randomBytes(32));
-const codeChallenge = base64UrlEncode(
-  crypto.createHash('sha256').update(codeVerifier).digest()
-);
+const randomBytes = (length) => {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return bytes;
+};
 
-bru.setEnvVar('code_verifier', codeVerifier);
-bru.setEnvVar('code_challenge', codeChallenge);
-console.log('PKCE generated', { codeVerifier, codeChallenge });
+const sha256 = async (value) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return new Uint8Array(digest);
+};
+
+(async () => {
+  const verifierBytes = randomBytes(32);
+  const codeVerifier = base64UrlEncode(verifierBytes);
+  const challengeBytes = await sha256(codeVerifier);
+  const codeChallenge = base64UrlEncode(challengeBytes);
+
+  bru.setEnvVar('code_verifier', codeVerifier);
+  bru.setEnvVar('code_challenge', codeChallenge);
+  console.log('PKCE generated', { codeVerifier, codeChallenge });
+})();
 ```
 
 ## Auth notes
