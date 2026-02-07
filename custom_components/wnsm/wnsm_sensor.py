@@ -144,6 +144,8 @@ class WNSMSensorWithApiDate(WNSMSensor):
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
+        if self._valuetype == ValueType.METER_READ:
+            return f"{self.zaehlpunkt}_api_date"
         return f"{self.zaehlpunkt}_api_date_{self._valuetype.value.lower()}"
 
     async def async_update(self):
